@@ -1,7 +1,7 @@
 """System prompts and templates for the SHL Assessment Recommender agent.
 
 Contains the core system prompt that defines agent behavior, grounding rules,
-and response formatting. Optimized for token efficiency with Groq/Llama models.
+and response formatting. Optimized for token efficiency with Gemini models.
 """
 
 from __future__ import annotations

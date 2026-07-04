@@ -3,7 +3,7 @@
 This is the heart of the system. It:
 1. Extracts intent from conversation history
 2. Retrieves relevant assessments
-3. Routes to the appropriate Groq model (light vs powerful)
+3. Routes to the appropriate Gemini model (light vs powerful)
 4. Calls the LLM with grounding context
 5. Validates and fixes the response schema
 6. Ensures all recommendations are from the catalog
