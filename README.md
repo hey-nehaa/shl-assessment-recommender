@@ -14,9 +14,9 @@ short_description: Conversational AI agent for SHL assessment recommendations
 A conversational AI agent that helps hiring managers find the right SHL assessments through dialogue. The agent clarifies vague requests, recommends assessments grounded in the catalog, supports refinement and comparison, and refuses off-topic queries.
 
 **Live API:**
-- **Base:** [https://hey-nehaa-shl-assessment-recommender.hf.space](https://hey-nehaa-shl-assessment-recommender.hf.space)
-- **Health:** [https://hey-nehaa-shl-assessment-recommender.hf.space/health](https://hey-nehaa-shl-assessment-recommender.hf.space/health)
-- **Chat:** POST [https://hey-nehaa-shl-assessment-recommender.hf.space/chat](https://hey-nehaa-shl-assessment-recommender.hf.space/chat)
+- **Base:** [https://hey-neha-shl-assessment-recommender.hf.space](https://hey-neha-shl-assessment-recommender.hf.space)
+- **Health:** [https://hey-neha-shl-assessment-recommender.hf.space/health](https://hey-neha-shl-assessment-recommender.hf.space/health)
+- **Chat:** POST [https://hey-neha-shl-assessment-recommender.hf.space/chat](https://hey-neha-shl-assessment-recommender.hf.space/chat)
 
 ## Architecture
 
@@ -113,7 +113,7 @@ Returns `{"status": "ok"}` with HTTP 200.
 
 ### Hugging Face Spaces (Primary)
 
-Live at: [hey-nehaa/shl-assessment-recommender](https://huggingface.co/spaces/hey-nehaa/shl-assessment-recommender)
+Live at: [hey-neha/shl-assessment-recommender](https://huggingface.co/spaces/hey-neha/shl-assessment-recommender)
 
 1. Create a Docker Space on HF
 2. Add secret: `GROQ_API_KEY`
