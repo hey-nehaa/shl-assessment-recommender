@@ -119,6 +119,9 @@ async def replay_conversation(
         # Add user message
         messages.append({"role": "user", "content": user_msg})
 
+        # Rate-limit friendly: wait before each API call
+        await asyncio.sleep(2.5)
+
         # Call the API
         try:
             resp = await client.post(
@@ -184,6 +187,8 @@ async def run_evaluation():
     recalls = []
     async with httpx.AsyncClient() as client:
         for filepath in conv_files:
+            # Rate-limit friendly: wait between conversations
+            await asyncio.sleep(5.0)
             conv_name = filepath.stem
             print(f"\n--- {conv_name} ---")
 
