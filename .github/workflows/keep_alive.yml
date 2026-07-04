@@ -1,6 +1,8 @@
 name: Keep Space Alive
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     # Run every 6 hours (HF Spaces sleep after 48 hours of inactivity)
     - cron: '0 */6 * * *'
