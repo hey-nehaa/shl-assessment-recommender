@@ -8,9 +8,9 @@ load_dotenv()
 # --- LLM (Gemini) ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 # Powerful model for recommendations, comparisons, complex refinements
-MODEL_POWERFUL = os.getenv("MODEL_POWERFUL", "gemini-2.5-pro")
+MODEL_POWERFUL = os.getenv("MODEL_POWERFUL", "gemini-1.5-flash")
 # Lightweight model for clarification, intent extraction, simple routing
-MODEL_LIGHT = os.getenv("MODEL_LIGHT", "gemini-2.5-flash")
+MODEL_LIGHT = os.getenv("MODEL_LIGHT", "gemini-1.5-flash")
 
 # --- Retrieval ---
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
