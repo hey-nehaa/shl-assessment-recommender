@@ -1,8 +1,8 @@
 FROM python:3.11-slim
 
-# Render uses PORT env var; default to 10000
-ENV PORT=10000
-EXPOSE 10000
+# HF Spaces requires port 7860 and non-root user
+ENV PORT=7860
+EXPOSE 7860
 
 WORKDIR /app
 
@@ -22,4 +22,8 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 COPY app/ app/
 COPY data/ data/
 
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# HF Spaces runs as uid 1000
+RUN useradd -m -u 1000 user
+USER user
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]

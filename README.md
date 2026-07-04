@@ -1,12 +1,22 @@
+---
+title: SHL Assessment Recommender
+emoji: 🎯
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+license: mit
+short_description: Conversational AI agent for SHL assessment recommendations
+---
+
 # SHL Conversational Assessment Recommender
 
 A conversational AI agent that helps hiring managers find the right SHL assessments through dialogue. The agent clarifies vague requests, recommends assessments grounded in the catalog, supports refinement and comparison, and refuses off-topic queries.
 
-**Live API (Render):**
-- **Base:** `https://shl-assessment-recommender.onrender.com`
-- **Health:** `https://shl-assessment-recommender.onrender.com/health`
-- **Chat:** POST `https://shl-assessment-recommender.onrender.com/chat`
-- **GitHub:** [hey-nehaa/shl-assessment-recommender](https://github.com/hey-nehaa/shl-assessment-recommender)
+**Live API:**
+- **Base:** [https://hey-nehaa-shl-assessment-recommender.hf.space](https://hey-nehaa-shl-assessment-recommender.hf.space)
+- **Health:** [https://hey-nehaa-shl-assessment-recommender.hf.space/health](https://hey-nehaa-shl-assessment-recommender.hf.space/health)
+- **Chat:** POST [https://hey-nehaa-shl-assessment-recommender.hf.space/chat](https://hey-nehaa-shl-assessment-recommender.hf.space/chat)
 
 ## Architecture
 
@@ -101,23 +111,21 @@ Returns `{"status": "ok"}` with HTTP 200.
 
 ## Deployment
 
-### Render (Primary)
+### Hugging Face Spaces (Primary)
 
-**One-click deploy:** Use the `render.yaml` blueprint in this repo.
+Live at: [hey-nehaa/shl-assessment-recommender](https://huggingface.co/spaces/hey-nehaa/shl-assessment-recommender)
 
-1. Create a **Web Service** on [Render](https://render.com), connect your GitHub repo
-2. Render auto-detects the `Dockerfile` and builds
-3. Add environment variable: `GROQ_API_KEY` (set as secret in Render dashboard)
-4. Render sets the `PORT` environment variable automatically
-5. Set the health check path to `/health`
+1. Create a Docker Space on HF
+2. Add secret: `GROQ_API_KEY`
+3. Push code — auto-builds and deploys
 
-> **Note:** Free-tier Render services spin down after inactivity. The first `/health` call allows up to 2 minutes for the service to wake up.
+> **Note:** Free-tier HF Spaces spin down after inactivity. The first `/health` call allows up to 2 minutes for the service to wake up.
 
 ### Docker
 
 ```bash
 docker build -t shl-recommender .
-docker run -p 10000:10000 -e GROQ_API_KEY=your_key shl-recommender
+docker run -p 7860:7860 -e GROQ_API_KEY=your_key shl-recommender
 ```
 
 ## Environment Variables
@@ -127,7 +135,7 @@ docker run -p 10000:10000 -e GROQ_API_KEY=your_key shl-recommender
 | `GROQ_API_KEY` | Yes | — | Groq API key |
 | `MODEL_POWERFUL` | No | `llama-3.3-70b-versatile` | Model for recommendations |
 | `MODEL_LIGHT` | No | `llama-3.1-8b-instant` | Model for clarification |
-| `PORT` | No | `10000` | Server port (set by Render automatically) |
+| `PORT` | No | `7860` | Server port |
 
 ## Project Structure
 
@@ -148,7 +156,6 @@ docker run -p 10000:10000 -e GROQ_API_KEY=your_key shl-recommender
 │   ├── test_core.py       # Unit tests (18 tests)
 │   └── eval_harness.py    # Sample conversation replay + Recall@10
 ├── Dockerfile
-├── render.yaml            # Render Blueprint for one-click deploy
 ├── requirements.txt
 ├── .env.example
 └── README.md

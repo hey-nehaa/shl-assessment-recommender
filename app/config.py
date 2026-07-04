@@ -26,4 +26,4 @@ CATALOG_PATH = os.getenv(
 
 # --- Server ---
 HOST = os.getenv("HOST", "0.0.0.0")
-PORT = int(os.getenv("PORT", "10000"))
+PORT = int(os.getenv("PORT", "7860"))
