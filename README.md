@@ -9,163 +9,233 @@ license: mit
 short_description: Conversational AI agent for SHL assessment recommendations
 ---
 
-# SHL Conversational Assessment Recommender
+# 🎯 SHL Conversational Assessment Recommender
 
-A conversational AI agent that helps hiring managers find the right SHL assessments through dialogue. The agent clarifies vague requests, recommends assessments grounded in the catalog, supports refinement and comparison, and refuses off-topic queries.
+An intelligent, production-ready conversational AI agent that assists hiring managers in discovering and shortlisting the right SHL assessments from the product catalog. Built on top of Google's **Gemini API** and a custom hybrid semantic search engine, the recommender dynamically refines selections, clarifies vague requirements, compares assessments, and structures outputs to align directly with official catalog specs.
 
-**Live API:**
-- **Base:** [https://hey-neha-shl-assessment-recommender.hf.space](https://hey-neha-shl-assessment-recommender.hf.space)
-- **Health:** [https://hey-neha-shl-assessment-recommender.hf.space/health](https://hey-neha-shl-assessment-recommender.hf.space/health)
-- **Chat:** POST [https://hey-neha-shl-assessment-recommender.hf.space/chat](https://hey-neha-shl-assessment-recommender.hf.space/chat)
-- **GitHub Repo:** [hey-nehaa/shl-assessment-recommender](https://github.com/hey-nehaa/shl-assessment-recommender)
+---
 
-## Architecture
+## 🌐 Live API & Links
+
+*   **API Base URL:** [https://hey-neha-shl-assessment-recommender.hf.space](https://hey-neha-shl-assessment-recommender.hf.space)
+*   **Health Status:** [/health](https://hey-neha-shl-assessment-recommender.hf.space/health)
+*   **Chat Endpoint:** POST [/chat](https://hey-neha-shl-assessment-recommender.hf.space/chat)
+*   **GitHub Repository:** [hey-nehaa/shl-assessment-recommender](https://github.com/hey-nehaa/shl-assessment-recommender)
+
+---
+
+## 🏗️ System Architecture
 
 ```
-POST /chat → Parse History → Build Search Query → Hybrid Retrieval (FAISS + Keywords)
-    → Route Model (Light/Powerful) → Groq LLM → Parse JSON → Validate Against Catalog → Response
+                                  [ USER CONVERSATION ]
+                                            │
+                                            ▼
+                                     [ POST /chat ]
+                                            │
+                                            ▼
+                                    Parse Chat History
+                                            │
+                                            ▼
+                                  Build Vector Query
+                                            │
+                                            ▼
+                           Hybrid Retrieval (FAISS + Keywords)
+                                            │
+                                            ▼
+                              Model Routing (Flash vs Pro)
+                                            │
+                                            ▼
+                                     Gemini API Call
+                                            │
+                                            ▼
+                                     Parse JSON Schema
+                                            │
+                                            ▼
+                                Validate & Match Catalog
+                                            │
+                                            ▼
+                                   [ API RESPONSE ]
 ```
+
+### Tech Stack Overview
 
 | Component | Technology | Purpose |
-|-----------|-----------|---------|
-| API | FastAPI | Stateless REST endpoints |
-| LLM | Groq (Llama 3.3 70B / Llama 3.1 8B) | Dual-model routing |
-| Embeddings | all-MiniLM-L6-v2 | Semantic search |
-| Vector Store | FAISS (IndexFlatIP) | Cosine similarity search |
-| Retrieval | Hybrid | Semantic + keyword boosting |
+| :--- | :--- | :--- |
+| **API Framework** | FastAPI | High-performance, stateless REST endpoints |
+| **LLM Engine** | Gemini (`gemini-2.5-pro` & `gemini-2.5-flash`) | Dual-model routing for optimal cost, speed, and intelligence |
+| **Embeddings** | `all-MiniLM-L6-v2` | Dense vector generation for semantic query matching |
+| **Vector Store** | FAISS (`IndexFlatIP`) | High-speed, local cosine similarity search |
+| **Retrieval** | Hybrid (Semantic + TF-IDF) | Combining contextual intent with direct keyword boosting |
 
-### Model Routing
+### Intelligent Model Routing
 
-| Scenario | Model | Reason |
-|----------|-------|--------|
-| Early vague query | `llama-3.1-8b-instant` | Fast clarification |
-| Recommendations / comparisons / refinements | `llama-3.3-70b-versatile` | Quality reasoning |
-| Near turn budget (≥5 turns) | `llama-3.3-70b-versatile` | Must deliver results |
-| Long input (JD, 150+ chars) | `llama-3.3-70b-versatile` | Complex context |
+To maximize responsiveness while keeping API costs low, requests are routed based on turn characteristics:
 
-## Setup
+| Scenario | Model Routed | Rationale |
+| :--- | :--- | :--- |
+| **Early conversation / vague query** | `gemini-2.5-flash` | Ultra-fast responses to clarify customer needs |
+| **Shortlisting / complex refinements** | `gemini-2.5-pro` | Deep logical reasoning to select precise metrics |
+| **Near turn budget limit (Turn ≥ 5)** | `gemini-2.5-pro` | High precision to finalize recommendations in time |
+| **Detailed job description / long input** | `gemini-2.5-pro` | Large context processing to match job competencies |
+
+---
+
+## 🛠️ Getting Started
 
 ### Prerequisites
-- Python 3.11+
-- [Groq API key](https://console.groq.com/keys) (free)
+
+*   Python 3.11+
+*   **Gemini API Key** (obtainable from [Google AI Studio](https://aistudio.google.com/))
 
 ### Installation
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and add your GROQ_API_KEY
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/hey-nehaa/shl-assessment-recommender.git
+    cd shl-assessment-recommender
+    ```
+
+2.  **Set up virtual environment:**
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    ```
+
+3.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Configure environment:**
+    ```bash
+    cp .env.example .env
+    # Edit the .env file and set your GEMINI_API_KEY
+    ```
 
 ### Run Locally
 
+Start the FastAPI application development server:
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Run Tests
 
 ```bash
-# Unit tests (no API key needed)
+# Run unit test suite (offline, no API key required)
 pytest tests/test_core.py -v
 
-# Evaluation harness (requires running server)
+# Run the conversation evaluation harness (requires local server running)
 python tests/eval_harness.py
 ```
 
-## API Endpoints
+---
 
-### `GET /health`
-Returns `{"status": "ok"}` with HTTP 200.
+## 🔌 API Endpoints Reference
 
-### `POST /chat`
+### 1. Readiness Check (`GET /health`)
+Verifies that the service is running and vector indexes are loaded.
 
-**Request:**
-```json
-{
-  "messages": [
-    {"role": "user", "content": "I need assessments for a senior Java developer"},
-    {"role": "assistant", "content": "What seniority level?"},
-    {"role": "user", "content": "Mid-level, 4 years experience. Add personality tests."}
-  ]
-}
-```
+*   **Response:**
+    ```json
+    {
+      "status": "ok"
+    }
+    ```
 
-**Response:**
-```json
-{
-  "reply": "Here are assessments for a mid-level Java developer with personality evaluation.",
-  "recommendations": [
-    {"name": "Core Java (Advanced Level) (New)", "url": "https://www.shl.com/products/product-catalog/view/core-java-advanced-level-new/", "test_type": "K"},
-    {"name": "Spring (New)", "url": "https://www.shl.com/products/product-catalog/view/spring-new/", "test_type": "K"},
-    {"name": "OPQ Universal Competency Report 2.0", "url": "https://www.shl.com/products/product-catalog/view/opq-universal-competency-report-2-0/", "test_type": "P"}
-  ],
-  "end_of_conversation": false
-}
-```
+### 2. Conversation Interface (`POST /chat`)
+Process a message within a stateless conversation turn.
 
-- `recommendations` is `[]` when clarifying or refusing
-- `recommendations` contains 1-10 items when recommending
-- `end_of_conversation` is `true` only when the user confirms the shortlist
+*   **Request Body:**
+    ```json
+    {
+      "messages": [
+        {"role": "user", "content": "I need assessments for a senior Java developer"},
+        {"role": "assistant", "content": "What seniority level and team requirements do you have?"},
+        {"role": "user", "content": "Mid-level, 4 years experience. Also include personality tests."}
+      ]
+    }
+    ```
 
-## Deployment
+*   **Response Body:**
+    ```json
+    {
+      "reply": "Here are my recommended assessments for a mid-level Java developer, focusing on core programming competencies and workplace behavior.",
+      "recommendations": [
+        {
+          "name": "Core Java (Advanced Level) (New)",
+          "url": "https://www.shl.com/products/product-catalog/view/core-java-advanced-level-new/",
+          "test_type": "K"
+        },
+        {
+          "name": "Spring (New)",
+          "url": "https://www.shl.com/products/product-catalog/view/spring-new/",
+          "test_type": "K"
+        },
+        {
+          "name": "OPQ Universal Competency Report 2.0",
+          "url": "https://www.shl.com/products/product-catalog/view/opq-universal-competency-report-2-0/",
+          "test_type": "P"
+        }
+      ],
+      "end_of_conversation": false
+    }
+    ```
 
-### Hugging Face Spaces (Primary)
+> [NOTE]
+> - `recommendations` is empty (`[]`) when the agent is clarifying parameters or handling off-topic requests.
+> - `end_of_conversation` becomes `true` when the user has confirmed they are satisfied with the final shortlisted recommendations.
 
-Live at: [hey-neha/shl-assessment-recommender](https://huggingface.co/spaces/hey-neha/shl-assessment-recommender)
+---
 
-1. Create a Docker Space on HF
-2. Add secret: `GROQ_API_KEY`
-3. Push code — auto-builds and deploys
+## ⚙️ Environment Variables
 
-> **Note:** Free-tier HF Spaces spin down after inactivity. The first `/health` call allows up to 2 minutes for the service to wake up.
+Customize application behavior via the following environment variables in `.env`:
 
-### Docker
+| Key | Required | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `GEMINI_API_KEY` | **Yes** | — | Google Gemini developer API key |
+| `MODEL_POWERFUL` | No | `gemini-2.5-pro` | Model for recommendations, reasoning, and finalizations |
+| `MODEL_LIGHT` | No | `gemini-2.5-flash` | Model for intent classification and early clarifications |
+| `PORT` | No | `7860` | Server binding port |
+| `HOST` | No | `0.0.0.0` | Server binding address |
+| `TOP_K_RETRIEVAL` | No | `30` | Number of context documents retrieved for the model |
+| `TOP_K_RECOMMEND` | No | `10` | Maximum recommendations allowed in the API payload |
 
-```bash
-docker build -t shl-recommender .
-docker run -p 7860:7860 -e GROQ_API_KEY=your_key shl-recommender
-```
+---
 
-## Environment Variables
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `GROQ_API_KEY` | Yes | — | Groq API key |
-| `MODEL_POWERFUL` | No | `llama-3.3-70b-versatile` | Model for recommendations |
-| `MODEL_LIGHT` | No | `llama-3.1-8b-instant` | Model for clarification |
-| `PORT` | No | `7860` | Server port |
-
-## Project Structure
+## 📁 Directory Structure
 
 ```
 ├── app/
 │   ├── __init__.py
-│   ├── agent.py          # Orchestration: retrieval → LLM → validation
-│   ├── catalog.py         # Catalog loading, parsing, indexing
-│   ├── config.py          # Environment-based configuration
-│   ├── conversation.py    # Conversation history utilities
-│   ├── main.py            # FastAPI application and endpoints
-│   ├── models.py          # Pydantic request/response schemas
-│   ├── prompts.py         # System prompt and retrieval templates
-│   └── retrieval.py       # FAISS + keyword hybrid search engine
-├── data/raw/
-│   └── shl_product_catalog.json
+│   ├── agent.py          # Core coordinator (context builder, routing, API client, fallback)
+│   ├── catalog.py         # Catalog loading, indexing, canonicalization, and validation
+│   ├── config.py          # Environment settings and defaults
+│   ├── conversation.py    # Chat length, turn counts, and history managers
+│   ├── main.py            # FastAPI service entry point, lifespans, CORS and routes
+│   ├── models.py          # Pydantic schema validation structures
+│   ├── prompts.py         # System prompt instructions and context formats
+│   └── retrieval.py       # FAISS indexing + keyword boosting search engine
+├── data/
+│   └── raw/
+│       └── shl_product_catalog.json  # Reference product catalog
 ├── tests/
-│   ├── test_core.py       # Unit tests (18 tests)
-│   └── eval_harness.py    # Sample conversation replay + Recall@10
-├── Dockerfile
-├── requirements.txt
-├── .env.example
-└── README.md
+│   ├── test_core.py       # pytest unit test cases (18 items)
+│   └── eval_harness.py    # Conversation replay simulation & Recall@10 evaluator
+├── Dockerfile             # Multi-stage Docker config
+├── render.yaml            # Render Blueprint deployment specification
+├── requirements.txt       # Project python dependencies
+├── .env.example           # Config template
+└── README.md              # Documentation
 ```
 
-## Design Decisions
+---
 
-1. **Retrieval-grounded responses** — The LLM only sees retrieved assessments (top 30), not the full catalog. This prevents hallucination and keeps token usage low.
-2. **Hybrid retrieval** — FAISS semantic search finds conceptually relevant assessments. Keyword matching catches exact technology names (Java, SQL, OPQ). Combined scoring outperforms either alone.
-3. **Post-generation validation** — Every recommendation URL and name is validated against the catalog index. Hallucinated entries are fuzzy-matched or silently dropped.
-4. **Turn budget awareness** — The agent knows remaining turns and escalates to recommendations when budget is low.
-5. **Dual-model routing** — Cheap model for simple clarification, powerful model for complex reasoning. Automatic fallback if a model is unavailable.
+## 💡 Key Design Decisions
+
+1.  **Strict Grounding via Retrieval:** The LLM does not generate recommendation items from memory. Instead, it is fed the top 30 matched catalog entities. This ensures that recommended assessments exist in the real SHL portfolio, preventing hallucination.
+2.  **Post-Generation Validation:** Recommendation names and links returned by the model are parsed and validated against the catalog indexes. Any hallucinated items are resolved using substring and keyword matching or silently discarded.
+3.  **Hybrid Retrieval Engine:** Combines FAISS semantic embeddings (using `all-MiniLM-L6-v2`) with custom keyword boosting (checking exact tags like "Java", "SQL", "OPQ"). This delivers highly relevant grounding context to the LLM.
+4.  **Turn-Aware Budgeting:** The system prompt injects turn-budget context (`[Turns used: X/8]`). As turns approach 8, the prompt automatically shifts intent to force shortlisting rather than continuing to clarify.
+5.  **Graceful Key Failures:** If initialized without `GEMINI_API_KEY`, the agent enters a warning state rather than crashing the FastAPI lifespan, allowing `/health` checks and vector indexing to load successfully in deployment builders.
