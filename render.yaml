@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: shl-assessment-recommender
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false  # must be set manually in dashboard
+      - key: PORT
+        value: 10000
