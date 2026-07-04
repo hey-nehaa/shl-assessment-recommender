@@ -19,7 +19,8 @@ class TestCatalogLoading:
     """Tests for catalog data loading and preprocessing."""
 
     @pytest.fixture(scope="class")
-    def assessments(self):
+    @staticmethod
+    def assessments():
         return load_catalog()
 
     def test_catalog_loads(self, assessments):
@@ -137,7 +138,8 @@ class TestRetrievalEngine:
     """Tests for the retrieval system."""
 
     @pytest.fixture(scope="class")
-    def engine(self):
+    @staticmethod
+    def engine():
         from app.retrieval import RetrievalEngine
         assessments = load_catalog()
         return RetrievalEngine(assessments)
