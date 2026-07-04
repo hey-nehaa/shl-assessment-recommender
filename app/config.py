@@ -5,13 +5,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# --- LLM (Groq) ---
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+# --- LLM (Gemini) ---
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 # Powerful model for recommendations, comparisons, complex refinements
-MODEL_POWERFUL = os.getenv("MODEL_POWERFUL", "llama-3.3-70b-versatile")
+MODEL_POWERFUL = os.getenv("MODEL_POWERFUL", "gemini-2.5-pro")
 # Lightweight model for clarification, intent extraction, simple routing
-MODEL_LIGHT = os.getenv("MODEL_LIGHT", "llama-3.1-8b-instant")
+MODEL_LIGHT = os.getenv("MODEL_LIGHT", "gemini-2.5-flash")
 
 # --- Retrieval ---
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")

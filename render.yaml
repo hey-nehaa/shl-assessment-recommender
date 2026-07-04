@@ -5,7 +5,7 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
-      - key: GROQ_API_KEY
+      - key: GEMINI_API_KEY
         sync: false  # must be set manually in dashboard
       - key: PORT
         value: 10000

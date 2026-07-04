@@ -14,14 +14,15 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import re
 
-from openai import OpenAI
+from google import genai
+from google.genai import types
 
 from app.catalog import Assessment, build_name_index, build_url_index
 from app.config import (
-    GROQ_API_KEY,
-    GROQ_BASE_URL,
+    GEMINI_API_KEY,
     MODEL_LIGHT,
     MODEL_POWERFUL,
     TOP_K_RECOMMEND,
@@ -97,11 +98,12 @@ class SHLAgent:
         self.name_index = build_name_index(assessments)
         self.retrieval = RetrievalEngine(assessments)
 
-        # Initialize Groq client (OpenAI-compatible)
-        self.client = OpenAI(
-            api_key=GROQ_API_KEY,
-            base_url=GROQ_BASE_URL,
-        )
+        # Initialize Gemini client
+        api_key = GEMINI_API_KEY or os.environ.get("GEMINI_API_KEY") or os.environ.get("api_key")
+        if not api_key:
+            logger.warning("No Gemini API key provided. LLM calls will fail until a key is configured.")
+            api_key = "PLACEHOLDER"
+        self.client = genai.Client(api_key=api_key)
 
         logger.info(
             f"Agent initialized with {len(assessments)} assessments | "
@@ -196,29 +198,55 @@ class SHLAgent:
         return llm_messages
 
     async def _call_llm(self, messages: list[dict], model: str) -> str:
-        """Call Groq via OpenAI-compatible API with retry logic."""
+        """Call Gemini API with retry logic."""
+        # Extract system instruction
+        system_instruction = next(
+            (m["content"] for m in messages if m["role"] == "system"),
+            SYSTEM_PROMPT,
+        )
+
+        # Convert messages to Gemini format (role: "user" | "model")
+        contents = [
+            {
+                "role": "user" if m["role"] == "user" else "model",
+                "parts": [{"text": m["content"]}],
+            }
+            for m in messages
+            if m["role"] != "system"
+        ]
+
         max_retries = 3
         current_model = model
         for attempt in range(max_retries):
             try:
-                response = self.client.chat.completions.create(
+                response = await self.client.aio.models.generate_content(
                     model=current_model,
-                    messages=messages,
-                    temperature=0.1,
-                    max_tokens=2048,
-                    top_p=0.9,
+                    contents=contents,
+                    config=types.GenerateContentConfig(
+                        system_instruction=system_instruction,
+                        temperature=0.1,
+                        max_output_tokens=2048,
+                        top_p=0.9,
+                    ),
                 )
-                return response.choices[0].message.content
+                return response.text
             except Exception as e:
                 error_str = str(e)
-                # If model is blocked, fallback to the other model
-                if "403" in error_str and current_model == MODEL_LIGHT:
-                    logger.warning(f"Model {current_model} blocked, falling back to {MODEL_POWERFUL}")
+                # If model is blocked or rate limited, fallback to the other model
+                if (
+                    ("403" in error_str or "429" in error_str or "quota" in error_str.lower())
+                    and current_model == MODEL_LIGHT
+                ):
+                    logger.warning(
+                        f"Model {current_model} rate limited or blocked, falling back to {MODEL_POWERFUL}"
+                    )
                     current_model = MODEL_POWERFUL
                     continue
                 if attempt < max_retries - 1:
                     wait = 2 ** attempt
-                    logger.warning(f"Groq API error (attempt {attempt+1}), retrying in {wait}s: {e}")
+                    logger.warning(
+                        f"Gemini API error (attempt {attempt+1}), retrying in {wait}s: {e}"
+                    )
                     await asyncio.sleep(wait)
                 else:
                     raise
