@@ -17,6 +17,7 @@ A conversational AI agent that helps hiring managers find the right SHL assessme
 - **Base:** [https://hey-neha-shl-assessment-recommender.hf.space](https://hey-neha-shl-assessment-recommender.hf.space)
 - **Health:** [https://hey-neha-shl-assessment-recommender.hf.space/health](https://hey-neha-shl-assessment-recommender.hf.space/health)
 - **Chat:** POST [https://hey-neha-shl-assessment-recommender.hf.space/chat](https://hey-neha-shl-assessment-recommender.hf.space/chat)
+- **GitHub Repo:** [hey-nehaa/shl-assessment-recommender](https://github.com/hey-nehaa/shl-assessment-recommender)
 
 ## Architecture
 
