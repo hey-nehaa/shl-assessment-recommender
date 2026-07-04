@@ -6,6 +6,7 @@ A conversational AI agent that helps hiring managers find the right SHL assessme
 - **Base:** `https://shl-assessment-recommender.onrender.com`
 - **Health:** `https://shl-assessment-recommender.onrender.com/health`
 - **Chat:** POST `https://shl-assessment-recommender.onrender.com/chat`
+- **GitHub:** [hey-nehaa/shl-assessment-recommender](https://github.com/hey-nehaa/shl-assessment-recommender)
 
 ## Architecture
 
