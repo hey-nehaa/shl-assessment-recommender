@@ -62,21 +62,21 @@ An intelligent, production-ready conversational AI agent that assists hiring man
 | Component | Technology | Purpose |
 | :--- | :--- | :--- |
 | **API Framework** | FastAPI | High-performance, stateless REST endpoints |
-| **LLM Engine** | Gemini (`gemini-1.5-flash`) | High-performance reasoning on a generous free-tier |
+| **LLM Engine** | Gemini (`gemini-3.1-flash-live-preview`) | High-performance reasoning on a generous free-tier |
 | **Embeddings** | `all-MiniLM-L6-v2` | Dense vector generation for semantic query matching |
 | **Vector Store** | FAISS (`IndexFlatIP`) | High-speed, local cosine similarity search |
 | **Retrieval** | Hybrid (Semantic + TF-IDF) | Combining contextual intent with direct keyword boosting |
 
 ### Intelligent Model Routing
 
-To maximize responsiveness while keeping API costs low, requests are routed based on turn characteristics (both default to `gemini-1.5-flash` for rate-limit stability, but can be customized to any model including `gemini-1.5-pro` or `gemini-2.5-pro`):
+To maximize responsiveness while keeping API costs low, requests are routed based on turn characteristics (both default to `gemini-3.1-flash-live-preview` for rate-limit stability, but can be customized to any model including `gemini-3.5-flash` or `gemini-3.1-pro`):
 
 | Scenario | Model Routed | Rationale |
 | :--- | :--- | :--- |
-| **Early conversation / vague query** | `gemini-1.5-flash` | Ultra-fast responses to clarify customer needs |
-| **Shortlisting / complex refinements** | `gemini-1.5-flash` | Deep logical reasoning to select precise metrics |
-| **Near turn budget limit (Turn ≥ 5)** | `gemini-1.5-flash` | High precision to finalize recommendations in time |
-| **Detailed job description / long input** | `gemini-1.5-flash` | Large context processing to match job competencies |
+| **Early conversation / vague query** | `gemini-3.1-flash-live-preview` | Ultra-fast responses to clarify customer needs |
+| **Shortlisting / complex refinements** | `gemini-3.1-flash-live-preview` | Deep logical reasoning to select precise metrics |
+| **Near turn budget limit (Turn ≥ 5)** | `gemini-3.1-flash-live-preview` | High precision to finalize recommendations in time |
+| **Detailed job description / long input** | `gemini-3.1-flash-live-preview` | Large context processing to match job competencies |
 
 ---
 
@@ -195,8 +195,8 @@ Customize application behavior via the following environment variables in `.env`
 | Key | Required | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `GEMINI_API_KEY` | **Yes** | — | Google Gemini developer API key |
-| `MODEL_POWERFUL` | No | `gemini-1.5-flash` | Model for recommendations, reasoning, and finalizations |
-| `MODEL_LIGHT` | No | `gemini-1.5-flash` | Model for intent classification and early clarifications |
+| `MODEL_POWERFUL` | No | `gemini-3.1-flash-live-preview` | Model for recommendations, reasoning, and finalizations |
+| `MODEL_LIGHT` | No | `gemini-3.1-flash-live-preview` | Model for intent classification and early clarifications |
 | `PORT` | No | `7860` | Server binding port |
 | `HOST` | No | `0.0.0.0` | Server binding address |
 | `TOP_K_RETRIEVAL` | No | `30` | Number of context documents retrieved for the model |
